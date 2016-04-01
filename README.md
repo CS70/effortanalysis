@@ -50,3 +50,15 @@ Make sure to activate your virtual environment, if you haven't already. (If you 
 source activate effortanalysis
 ```
 
+Here is usage information.
+
+```
+Usage:
+  effort.py (solution | submission | template) <path> [--scope=NAME] [--type=TYPE] [--output=FILE]
+
+Options:
+  -h --help       Show this screen
+  --scope=NAME    Name of scope to operate in [default: global]
+  --type=TYPE     Type of file [default: tex]
+  --output=FILE   Type of output [default: console]
+```

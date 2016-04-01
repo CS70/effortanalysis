@@ -1,0 +1,2 @@
+class SubmissionModule(object):
+    pass
