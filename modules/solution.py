@@ -4,11 +4,12 @@ Solution Module
 Analyzes solutions
 
 """
+from TexSoup import TexSoup
+
 class SolutionModule(object):
 
     def __init__(self, filepath=None, filetype='tex', text=None,
-        output='console', print_answers=False,
-        allowed_chars=(' ', '\n', '+', '-', '=', '(', ')', ',', ':')):
+        output='console', print_answers=False):
         """Initialize a solution module to begin processing
 
         :param str filepath: path to solution file
@@ -21,23 +22,18 @@ class SolutionModule(object):
         self.filetype = filetype
         self.text = text
         self.output = output
-        self.allowed_chars = allowed_chars
         self.print_answers = print_answers
         self.__answers = None
 
     @property
     def answers(self):
-        """Returns answers"""
+        """Returns answers, but runs extract if not already run"""
         if not self.__answers:
             self.extract()
         return self.__answers
 
-
     def extract(self):
-        """Extracts answers from source
-
-        :return: list of answers
-        """
+        """Extracts answers from source, and stores results in answers"""
         if self.filetype == 'pdf':
             raise NotImplementedError()
         elif self.filetype == 'tex':
@@ -49,26 +45,8 @@ class SolutionModule(object):
 
     def extractFromTex(self, text):
         """Extract answers from the provided LaTeX source"""
-        answers = []
-        for answer in text.split('\\answer{'):
-            depth, chars, removeit = 1, [], False
-            for c in answer:
-
-                # check depth
-                if c == '{': depth += 1
-                elif c == '}': depth -= 1
-                if depth == 0: break
-
-                # skip anything of the form \text
-                if c == '\\': removeit = True
-                if removeit and c in (' ', '\n'): removeit = False
-
-                # add character only if allowed
-                if (c.isalpha() or c.isnumeric() or c in self.allowed_chars) and not removeit:
-                    chars.append(c)
-
-            answers.append(''.join(chars).strip())
-        self.__answers = answers[1:]
+        soup = TexSoup(text)
+        self.__answers = list(soup.find_all('answer'))
         return self
 
     def __str__(self):
